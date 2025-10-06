@@ -19,38 +19,27 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
         self.setStyleSheet("""
-            QMainWindow {
-                background: #f7f7f7;
-            }
+            QMainWindow { background: #0b0f14; }
+            QWidget { color: #e5e7eb; }
             QPushButton {
-                background: #1976d2;
-                color: white;
-                border-radius: 6px;
+                background: #111827;
+                color: #e5e7eb;
+                border: 1px solid #1f2937;
+                border-radius: 8px;
                 padding: 12px 24px;
                 font-size: 16px;
-                font-weight: bold;
+                font-weight: 600;
                 margin: 8px 0;
             }
-            QPushButton:hover {
-                background: #1565c0;
-            }
+            QPushButton:hover { background: #1f2937; }
             QLabel#titulo {
                 font-size: 28px;
                 font-weight: bold;
-                color: #1976d2;
+                color: #93c5fd;
                 margin-bottom: 18px;
             }
-            QLabel#subtitulo {
-                font-size: 16px;
-                color: #555;
-                margin-bottom: 18px;
-            }
-            QFrame {
-                background: #fff;
-                border-radius: 12px;
-                padding: 24px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            }
+            QLabel#subtitulo { font-size: 16px; color: #9ca3af; margin-bottom: 18px; }
+            QFrame { background: #0f172a; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; }
         """)
 
         main_layout = QVBoxLayout()

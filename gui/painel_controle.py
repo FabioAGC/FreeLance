@@ -11,25 +11,12 @@ class PainelControle(QWidget):
         self.setWindowTitle('Painel de Controle')
         self.setGeometry(120, 120, 820, 520)
         self.setStyleSheet("""
-            QWidget { background: #f4f5f7; }
-            QFrame[card="true"] {
-                background: #fff;
-                border-radius: 14px;
-                padding: 18px;
-            }
-            QLabel[metric="true"] {
-                font-size: 30px;
-                font-weight: 800;
-                color: #1f2937;
-            }
-            QLabel[desc="true"] {
-                font-size: 13px;
-                color: #6b7280;
-            }
-            QLabel[muted="true"] { color: #9ca3af; }
-            QFrame#header {
-                background: transparent;
-            }
+            QWidget { background: #0b0f14; color: #e5e7eb; }
+            QFrame[card="true"] { background: #0f172a; border: 1px solid #1f2937; border-radius: 14px; padding: 18px; }
+            QLabel[metric="true"] { font-size: 30px; font-weight: 800; color: #f9fafb; }
+            QLabel[desc="true"] { font-size: 13px; color: #9ca3af; }
+            QLabel[muted="true"] { color: #6b7280; }
+            QFrame#header { background: transparent; }
         """)
 
         main_layout = QVBoxLayout(self)
@@ -85,16 +72,16 @@ class PainelControle(QWidget):
             layout.addLayout(vbox)
             return card
 
-        card1 = make_card('Total de Clientes', str(metrics['total_clientes']), 'user-group', QStyle.SP_DirIcon, '#dbeafe')
+        card1 = make_card('Total de Clientes', str(metrics['total_clientes']), 'user-group', QStyle.SP_DirIcon, '#1f2937')
         grid.addWidget(card1, 0, 0)
 
-        card2 = make_card('Serviços Ativos', str(metrics['total_ativos']), 'media-playback-start', QStyle.SP_ArrowForward, '#dcfce7')
+        card2 = make_card('Serviços Ativos', str(metrics['total_ativos']), 'media-playback-start', QStyle.SP_ArrowForward, '#064e3b')
         grid.addWidget(card2, 0, 1)
 
-        card3 = make_card('Serviços Pendentes', str(metrics['total_pendentes']), 'task-past-due', QStyle.SP_MessageBoxWarning, '#fef3c7')
+        card3 = make_card('Serviços Pendentes', str(metrics['total_pendentes']), 'task-past-due', QStyle.SP_MessageBoxWarning, '#7c2d12')
         grid.addWidget(card3, 1, 0)
 
-        card4 = make_card('Faturamento do Mês', f"R$ {metrics['faturamento']:.2f}", 'wallet', QStyle.SP_DriveHDIcon, '#ede9fe')
+        card4 = make_card('Faturamento do Mês', f"R$ {metrics['faturamento']:.2f}", 'wallet', QStyle.SP_DriveHDIcon, '#3b0764')
         grid.addWidget(card4, 1, 1)
 
         main_layout.addLayout(grid)

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QTextEdit, QPushButton, QFrame
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QTextEdit, QPushButton, QFrame, QSizePolicy, QStyle
 )
 from PyQt5.QtGui import QColor, QFont, QIcon
 from PyQt5.QtCore import Qt
@@ -9,64 +9,44 @@ class GerenciamentoServicos(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Gerenciamento de Serviços')
-        self.setGeometry(250, 250, 900, 500)
-        self.setWindowIcon(QIcon())
+        self.setGeometry(250, 250, 1000, 560)
+        self.setWindowIcon(QIcon('icon.png'))
         self.setStyleSheet("""
-            QWidget {
-                background: #f7f7f7;
-            }
-            QLineEdit, QTextEdit {
-                padding: 6px;
-                border-radius: 4px;
-                border: 1px solid #bdbdbd;
-                font-size: 14px;
-            }
-            QLabel {
-                font-size: 15px;
-                color: #333;
-            }
-            QTableWidget {
-                background: #fff;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-            QComboBox {
-                border-radius: 4px;
-                font-size: 14px;
-                padding: 6px;
-            }
-            QComboBox QAbstractItemView {
-                background: #fff;
-                color: #222;
-                selection-background-color: #ffe082;
-                selection-color: #222;
-            }
-            QPushButton {
-                background: #1976d2;
-                color: white;
-                border-radius: 4px;
-                padding: 8px 16px;
-                font-weight: bold;
-                font-size: 15px;
-            }
-            QPushButton:hover {
-                background: #1565c0;
-            }
+            QWidget { background: #0b0f14; color: #e5e7eb; }
+            QFrame[card="true"] { background: #0f172a; border: 1px solid #1f2937; border-radius: 12px; padding: 16px; }
+            QLabel[title="true"] { font-size: 20px; font-weight: 800; color: #f9fafb; }
+            QLabel[muted="true"] { color: #9ca3af; }
+            QLineEdit, QTextEdit { background: #111827; color: #e5e7eb; border: 1px solid #1f2937; border-radius: 8px; padding: 10px; }
+            QComboBox { background: #111827; color: #e5e7eb; border: 1px solid #1f2937; border-radius: 8px; padding: 8px; }
+            QComboBox QAbstractItemView { background: #111827; color: #e5e7eb; selection-background-color: #374151; selection-color: #e5e7eb; }
+            QPushButton { background: #111827; color: #e5e7eb; border: 1px solid #1f2937; border-radius: 8px; padding: 10px 16px; font-weight: 600; }
+            QPushButton:hover { background: #1f2937; }
+            QTableWidget { background: #0f172a; color: #e5e7eb; border: 1px solid #1f2937; border-radius: 8px; font-size: 14px; gridline-color: #1f2937; }
+            QHeaderView::section { background-color: #111827; color: #e5e7eb; padding: 8px; border: none; border-right: 1px solid #1f2937; }
+            QTableWidget::item:selected { background: #374151; }
         """)
 
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(30, 30, 30, 30)
         main_layout.setSpacing(18)
 
+        header = QFrame()
+        header.setProperty('card', True)
+        h = QHBoxLayout(header)
         title = QLabel('Gerenciamento de Serviços')
-        title.setFont(QFont('Arial', 18, QFont.Bold))
-        title.setAlignment(Qt.AlignCenter)
-        main_layout.addWidget(title)
+        title.setProperty('title', True)
+        h.addWidget(title)
+        h.addStretch(1)
+        main_layout.addWidget(header)
 
+        search_card = QFrame()
+        search_card.setProperty('card', True)
+        search_row = QHBoxLayout(search_card)
         self.busca = QLineEdit()
         self.busca.setPlaceholderText('Buscar serviço, cliente...')
         self.busca.textChanged.connect(self.filtrar)
-        main_layout.addWidget(self.busca)
+        search_row.addWidget(self.busca)
+        main_layout.addWidget(search_card)
 
         self.tabela = QTableWidget()
         self.tabela.setColumnCount(9)
@@ -74,7 +54,7 @@ class GerenciamentoServicos(QWidget):
             'Cliente', 'Serviço', 'Custo', 'Desconto', 'Valor Final', 'Status', 'Início', 'Conclusão', 'Descrição'
         ])
         self.tabela.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.tabela.setAlternatingRowColors(True)
+        self.tabela.setAlternatingRowColors(False)
         main_layout.addWidget(self.tabela)
         self.tabela.cellClicked.connect(self.selecionar_linha)
 
@@ -97,7 +77,6 @@ class GerenciamentoServicos(QWidget):
         txt.setPlaceholderText('Digite a descrição do serviço...')
         layout.addWidget(txt)
         btn_salvar = QPushButton('Salvar')
-        btn_salvar.setStyleSheet('background:#1976d2;color:white;font-weight:bold;padding:8px 16px;border-radius:4px;')
         layout.addWidget(btn_salvar)
         def salvar():
             nova_desc = txt.toPlainText()
