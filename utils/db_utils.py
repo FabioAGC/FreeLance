@@ -7,8 +7,11 @@ if getattr(sys, 'frozen', False):
 else:
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(PROJECT_ROOT, 'database', 'db.sqlite3')
+# Garante que o diretório do banco exista para evitar OperationalError
+os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 def conectar():
+    # Diretório já garantido acima; apenas conecta
     return sqlite3.connect(DB_PATH)
 
 def criar_tabelas():
@@ -76,5 +79,17 @@ def atualizar_status_servico(id_servico, novo_status):
         cursor.execute('UPDATE servicos SET status=?, data_conclusao=? WHERE id=?', (novo_status, data_conclusao, id_servico))
     else:
         cursor.execute('UPDATE servicos SET status=? WHERE id=?', (novo_status, id_servico))
+    conn.commit()
+    conn.close()
+
+def reset_database():
+    """Dropa dados das tabelas e recria o esquema limpo."""
+    conn = conectar()
+    cursor = conn.cursor()
+    # Garantir que as tabelas existam antes
+    criar_tabelas()
+    # Limpar tabelas
+    cursor.execute('DELETE FROM servicos')
+    cursor.execute('DELETE FROM clientes')
     conn.commit()
     conn.close()

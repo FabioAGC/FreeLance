@@ -1,16 +1,23 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout, QLabel, QHBoxLayout, QFrame
-from PyQt5.QtGui import QFont, QIcon
-from PyQt5.QtCore import Qt
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout, QLabel, QHBoxLayout, QFrame, QStyle
+from PyQt5.QtGui import QFont, QIcon, QPixmap
+from PyQt5.QtCore import Qt, QSize
 from gui.cadastro_cliente import CadastroCliente
 from gui.cadastro_servico import CadastroServico
-import sys
+from utils.db_utils import criar_tabelas
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Sistema de Cadastro')
         self.setGeometry(100, 100, 500, 350)
-        self.setWindowIcon(QIcon())
+        # Define the app/window icon (uses existing icon.png at project root)
+        self.setWindowIcon(QIcon('icon.png'))
+        # Garante que as tabelas existam ao iniciar a aplicação
+        try:
+            criar_tabelas()
+        except Exception:
+            pass
         self.setStyleSheet("""
             QMainWindow {
                 background: #f7f7f7;
@@ -50,7 +57,6 @@ class MainWindow(QMainWindow):
         main_layout.setContentsMargins(40, 40, 40, 40)
         main_layout.setSpacing(18)
 
-        from PyQt5.QtGui import QPixmap
         icon_label = QLabel()
         pixmap = QPixmap('icon.png')  # Salve o arquivo como 'icon.png' na raiz do projeto
         pixmap = pixmap.scaled(80, 80, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -67,17 +73,41 @@ class MainWindow(QMainWindow):
         frame_layout = QVBoxLayout(frame)
         frame_layout.setSpacing(16)
 
+        # Helper to obtain themed icons with safe fallbacks
+        def themed_icon(primary_name: str, fallback_standard: QStyle.StandardPixmap) -> QIcon:
+            icon = QIcon.fromTheme(primary_name)
+            if icon.isNull():
+                icon = self.style().standardIcon(fallback_standard)
+            return icon
+
+        btn_painel = QPushButton('Painel de Controle')
+        btn_painel.setIcon(themed_icon('view-dashboard', QStyle.SP_DesktopIcon))
+        btn_painel.setIconSize(QSize(24, 24))
+        btn_painel.clicked.connect(self.abrir_painel_controle)
+        frame_layout.addWidget(btn_painel)
+
         btn_cliente = QPushButton('Cadastro de Cliente')
-        btn_servico = QPushButton('Cadastro de Serviço')
-        btn_gerenciar = QPushButton('Gerenciar Serviços')
-        btn_cliente.setIcon(QIcon())
-        btn_servico.setIcon(QIcon())
-        btn_gerenciar.setIcon(QIcon())
+        # Try common user/contacts icons from themes, fallback to a generic file icon
+        ic_cliente = QIcon.fromTheme('user-group')
+        if ic_cliente.isNull():
+            ic_cliente = QIcon.fromTheme('contact-new')
+        if ic_cliente.isNull():
+            ic_cliente = self.style().standardIcon(QStyle.SP_FileIcon)
+        btn_cliente.setIcon(ic_cliente)
+        btn_cliente.setIconSize(QSize(24, 24))
         btn_cliente.clicked.connect(self.abrir_cadastro_cliente)
-        btn_servico.clicked.connect(self.abrir_cadastro_servico)
-        btn_gerenciar.clicked.connect(self.abrir_gerenciamento_servicos)
         frame_layout.addWidget(btn_cliente)
+
+        btn_servico = QPushButton('Cadastro de Serviço')
+        btn_servico.setIcon(themed_icon('document-new', QStyle.SP_DialogOpenButton))
+        btn_servico.setIconSize(QSize(24, 24))
+        btn_servico.clicked.connect(self.abrir_cadastro_servico)
         frame_layout.addWidget(btn_servico)
+
+        btn_gerenciar = QPushButton('Gerenciar Serviços')
+        btn_gerenciar.setIcon(themed_icon('view-list', QStyle.SP_FileDialogListView))
+        btn_gerenciar.setIconSize(QSize(24, 24))
+        btn_gerenciar.clicked.connect(self.abrir_gerenciamento_servicos)
         frame_layout.addWidget(btn_gerenciar)
 
         main_layout.addWidget(frame)
@@ -85,6 +115,11 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
+
+    def abrir_painel_controle(self):
+        from gui.painel_controle import PainelControle
+        self.painel_controle = PainelControle()
+        self.painel_controle.show()
 
     def abrir_cadastro_cliente(self):
         self.cadastro_cliente = CadastroCliente()
